@@ -1,0 +1,16 @@
+---
+# tasks file for ansible-coreos-setup
+- name: Create env.d dir
+  sudo: yes
+  sudo_user: root
+  file: path=/etc/env.d state=directory mode=0755
+
+- name: Create coreos env file
+  sudo: yes
+  sudo_user: root
+  template: src=coreos.env.j2 dest=/etc/env.d/coreos.env
+
+- name: Create env file
+  sudo: yes
+  sudo_user: root
+  assemble: src=/etc/env.d dest=/etc/environment mode=0644
