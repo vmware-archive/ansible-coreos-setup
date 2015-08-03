@@ -14,3 +14,34 @@
   sudo: yes
   sudo_user: root
   assemble: src=/etc/env.d dest=/etc/environment mode=0644
+
+- name: download etcd
+  sudo: yes
+  sudo_user: root
+  get_url: url={{etcd_release_tarball}} dest=/tmp/etcd.tar.gz
+  when: etcd_release_tarball != ""
+  register: etcd_dl
+
+- name: extract etcd binaries
+  sudo: yes
+  sudo_user: root
+  shell: tar -C {{etcd_install_dir}} --strip-components 1 --wildcards -xf {{etcd_dl.dest}} '*/etcd*'
+  when: etcd_dl.changed
+
+- name: create etcd dropin dir
+  sudo: yes
+  sudo_user: root
+  file: path=/etc/systemd/system/etcd2.service.d state=directory
+
+- name: install etcd dropin
+  sudo: yes
+  sudo_user: root
+  template: src=00-etcd.conf dest=/etc/systemd/system/etcd2.service.d/00-etcd.conf
+  register: etcd_dropin
+  when: etcd_dl.changed
+
+- name: Reload systemd
+  sudo: yes
+  sudo_user: root
+  shell: systemctl daemon-reload
+  when: etcd_dropin.changed
