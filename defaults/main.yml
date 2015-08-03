@@ -2,3 +2,4 @@
 # defaults file for ansible-coreos-setup
 etcd_release_tarball: ""
 etcd_install_dir: "/opt/bin"
+disabled_units: []
