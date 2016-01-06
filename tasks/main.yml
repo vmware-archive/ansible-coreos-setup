@@ -9,12 +9,14 @@
   sudo: yes
   sudo_user: root
   copy: src=get-static-docker dest=/opt/bin/get-static-docker mode=0755
+  when: install_static_docker
 
 - name: install docker downloader service
   sudo: yes
   sudo_user: root
   copy: src=static-docker.service dest=/etc/systemd/system/static-docker.service
   register: static_docker
+  when: install_static_docker
 
 - name: Enable docker downloader service
   service: name=static-docker.service enabled=yes state=started

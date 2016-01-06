@@ -3,3 +3,4 @@
 etcd_release_tarball: ""
 etcd_install_dir: "/opt/bin"
 disabled_units: []
+install_static_docker: True
