@@ -2,18 +2,15 @@
 # tasks file for ansible-coreos-setup
 - name: create /opt/bin
   sudo: yes
-  sudo_user: root
   file: path=/opt/bin state=directory mode=0755
 
 - name: install docker downloader
   sudo: yes
-  sudo_user: root
   copy: src=get-static-docker dest=/opt/bin/get-static-docker mode=0755
   when: install_static_docker
 
 - name: install docker downloader service
   sudo: yes
-  sudo_user: root
   copy: src=static-docker.service dest=/etc/systemd/system/static-docker.service
   register: static_docker
   when: install_static_docker
@@ -21,57 +18,73 @@
 - name: Enable docker downloader service
   service: name=static-docker.service enabled=yes state=started
   sudo: yes
-  sudo_user: root
   when: static_docker.changed
+
+- name: install docker gc service
+  sudo: yes
+  copy: src=docker-gc.service dest=/etc/systemd/system/docker-gc.service
+  register: docker_gc
+  when: install_docker_gc
+
+- name: Enable docker gc service
+  service: name=docker-gc.service enabled=yes
+  sudo: yes
+  when: docker_gc.changed
+
+- name: Make sure we have static docker if we install gc
+  fail: msg="static docker is needed for gc to run"
+  when: install_docker_gc and not install_static_docker
+
+- name: install docker gc timer
+  sudo: yes
+  copy: src=docker-gc.timer dest=/etc/systemd/system/docker-gc.timer
+  register: docker_gc_timer
+  when: install_docker_gc
+
+- name: Enable docker gc timer
+  service: name=docker-gc.timer enabled=yes state=started
+  sudo: yes
+  when: docker_gc_timer.changed
 
 - name: Create env.d dir
   sudo: yes
-  sudo_user: root
   file: path=/etc/env.d state=directory mode=0755
 
 - name: Create coreos env file
   sudo: yes
-  sudo_user: root
   template: src=coreos.env.j2 dest=/etc/env.d/coreos.env
 
 - name: Create env file
   sudo: yes
-  sudo_user: root
   assemble: src=/etc/env.d dest=/etc/environment mode=0644
 
 - name: Download etcd
   sudo: yes
-  sudo_user: root
   get_url: url={{etcd_release_tarball}} dest=/tmp/etcd.tar.gz
   when: etcd_release_tarball != ""
   register: etcd_dl
 
 - name: Extract etcd binaries
   sudo: yes
-  sudo_user: root
   shell: tar -C {{etcd_install_dir}} --strip-components 1 --wildcards -xf {{etcd_dl.dest}} '*/etcd*'
   when: etcd_dl.changed
 
 - name: Create etcd dropin dir
   sudo: yes
-  sudo_user: root
   file: path=/etc/systemd/system/etcd2.service.d state=directory
 
 - name: Install etcd dropin
   sudo: yes
-  sudo_user: root
   template: src=00-etcd.conf dest=/etc/systemd/system/etcd2.service.d/00-etcd.conf
   register: etcd_dropin
   when: etcd_dl.changed
 
 - name: Disable units
   sudo: yes
-  sudo_user: root
   file: src=/dev/null path=/etc/systemd/system/{{item}} state=link force=yes
   with_items: "{{disabled_units}}"
 
 - name: Reload systemd
   sudo: yes
-  sudo_user: root
   shell: systemctl daemon-reload
   when: etcd_dropin.changed or {{disabled_units}}
