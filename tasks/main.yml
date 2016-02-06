@@ -76,15 +76,11 @@
 - name: Install etcd dropin
   sudo: yes
   template: src=00-etcd.conf dest=/etc/systemd/system/etcd2.service.d/00-etcd.conf
-  register: etcd_dropin
   when: etcd_dl.changed
+  notify: Reload systemd
 
 - name: Disable units
   sudo: yes
   file: src=/dev/null path=/etc/systemd/system/{{item}} state=link force=yes
   with_items: "{{disabled_units}}"
-
-- name: Reload systemd
-  sudo: yes
-  shell: systemctl daemon-reload
-  when: etcd_dropin.changed or {{disabled_units}}
+  notify: Reload systemd
