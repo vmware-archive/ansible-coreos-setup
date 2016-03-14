@@ -22,7 +22,7 @@
 
 - name: install docker gc service
   sudo: yes
-  copy: src=docker-gc.service dest=/etc/systemd/system/docker-gc.service
+  template: src=docker-gc.service dest=/etc/systemd/system/docker-gc.service
   register: docker_gc
   when: install_docker_gc
 
