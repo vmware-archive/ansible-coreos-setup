@@ -33,9 +33,7 @@
 
 - name: pull docker gc image
   sudo: yes
-  docker_image: name={{docker_gc_img}} state=present
-  when: docker_gc.changed
-  ignore_errors: yes
+  docker: image={{docker_gc_img}} state=present
 
 - name: Make sure we have static docker if we install gc
   fail: msg="static docker is needed for gc to run"
