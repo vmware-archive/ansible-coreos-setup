@@ -3,3 +3,11 @@
   sudo: yes
   command: systemctl --system daemon-reload
 
+- name: Reload systemd-timesyncd
+  sudo: yes
+  command: systemctl restart systemd-timesyncd
+
+- name: Enable ntp
+  sudo: yes
+  command: timedatectl set-ntp true
+  notify: Reload systemd-timesyncd

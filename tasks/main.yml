@@ -1,5 +1,10 @@
 ---
 # tasks file for ansible-coreos-setup
+- name: setup ntp
+  sudo: yes
+  template: src=timesyncd.conf dest=/etc/systemd/timesyncd.conf
+  notify: Enable ntp
+
 - name: create /opt/bin
   sudo: yes
   file: path=/opt/bin state=directory mode=0755

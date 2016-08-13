@@ -6,3 +6,4 @@ disabled_units: []
 install_static_docker: True
 install_docker_gc: True
 docker_gc_img: "spotify/docker-gc"
+ntp_servers: []
