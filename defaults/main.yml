@@ -7,3 +7,6 @@ install_static_docker: True
 install_docker_gc: True
 docker_gc_img: "spotify/docker-gc"
 ntp_servers: []
+docker_dropin_dir: "/etc/systemd/system/docker.service.d/"
+setup_logging: True
+docker_logging_opts: '--log-driver=json-file'

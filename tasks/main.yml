@@ -5,6 +5,22 @@
   template: src=timesyncd.conf dest=/etc/systemd/timesyncd.conf
   notify: Enable ntp
 
+- name: create systemd drop-in directory
+  file: path={{docker_dropin_dir}} state=directory mode=0755
+  sudo: yes
+  when: setup_logging
+
+- name: install logging env
+  sudo: yes
+  template: src=docker-logging.env dest=/run/docker-logging.env
+  when: setup_logging
+  notify: Reload systemd
+
+- name: update docker service options
+  sudo: yes
+  copy: src=docker-override.conf dest={{docker_dropin_dir}}/docker-override.conf
+  when: setup_logging
+
 - name: create /opt/bin
   sudo: yes
   file: path=/opt/bin state=directory mode=0755
