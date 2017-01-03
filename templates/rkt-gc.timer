@@ -1,0 +1,9 @@
+[Unit]
+Description=Run Docker Garbage Collector {{rkt_gc_frequency}}
+
+[Timer]
+OnCalendar={{rkt_gc_frequency}}
+Persistent=true
+
+[Install]
+WantedBy=timers.target
