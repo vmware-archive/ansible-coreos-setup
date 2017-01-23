@@ -47,7 +47,7 @@
 
 - name: install docker gc timer
   sudo: yes
-  copy: src=docker-gc.timer dest=/etc/systemd/system/docker-gc.timer
+  template: src=docker-gc.timer dest=/etc/systemd/system/docker-gc.timer
   register: docker_gc_timer
   when: install_docker_gc
 
@@ -88,6 +88,28 @@
   template: src=00-etcd.conf dest=/etc/systemd/system/etcd2.service.d/00-etcd.conf
   when: etcd_dl.changed
   notify: Reload systemd
+
+- name: Install rkt gc service
+  sudo: yes
+  template: src=rkt-gc.service dest=/etc/systemd/system/rkt-gc.service
+  register: rkt_gc
+  when: install_rkt_gc
+
+- name: Enable rkt gc service
+  service: name=rkt-gc.service enabled=yes
+  sudo: yes
+  when: rkt_gc.changed
+
+- name: Install rkt gc timer
+  sudo: yes
+  template: src=rkt-gc.timer dest=/etc/systemd/system/rkt-gc.timer
+  register: rkt_gc_timer
+  when: install_rkt_gc
+
+- name: Enable rkt gc timer
+  service: name=rkt-gc.timer enabled=yes state=started
+  sudo: yes
+  when: rkt_gc_timer.changed
 
 - name: Disable units
   sudo: yes
