@@ -12,3 +12,6 @@ docker_gc_grace_period_seconds: "3600"
 rkt_gc_frequency: "daily"
 rkt_gc_grace_period: "24h"
 ntp_servers: []
+docker_dropin_dir: "/etc/systemd/system/docker.service.d/"
+setup_logging: True
+docker_logging_opts: '--log-driver=json-file'
