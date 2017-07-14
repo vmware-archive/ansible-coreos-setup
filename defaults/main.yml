@@ -3,14 +3,9 @@
 etcd_release_tarball: ""
 etcd_install_dir: "/opt/bin"
 disabled_units: []
-install_static_docker: True
-install_docker_gc: True
-docker_gc_img: "spotify/docker-gc"
-install_rkt_gc: True
-docker_gc_frequency: "daily"
-docker_gc_grace_period_seconds: "3600"
 logrotate: False
 logrotation_timer_frequency: "*:0/15"
+install_rkt_gc: True
 rkt_gc_frequency: "daily"
 rkt_gc_grace_period: "24h"
 ntp_servers: []
