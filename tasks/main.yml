@@ -56,6 +56,18 @@
   sudo: yes
   when: docker_gc_timer.changed
 
+- name: Enable logrotate for docker containers
+  become: yes
+  copy: src=docker-container-logrotate dest=/etc/logrotate.d/docker-container-logrotate
+  notify:
+     - Run logrotate
+  when: logrotate
+
+- name: Disable logrotate for docker containers
+  become: yes
+  file: path=/etc/logrotate.d/docker-container-logrotate state=absent
+  when: not logrotate
+
 - name: Create env.d dir
   sudo: yes
   file: path=/etc/env.d state=directory mode=0755
