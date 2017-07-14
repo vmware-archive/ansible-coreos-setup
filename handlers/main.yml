@@ -11,3 +11,7 @@
   sudo: yes
   command: timedatectl set-ntp true
   notify: Reload systemd-timesyncd
+
+- name: Run logrotate
+  become: yes
+  command: /usr/sbin/logrotate -fv /etc/logrotate.d/docker-container-logrotate
