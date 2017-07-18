@@ -1,0 +1,7 @@
+[Unit]
+Description=Log Rotation on '{{logrotation_timer_frequency}}' cadence
+
+[Timer]
+OnCalendar={{logrotation_timer_frequency}}
+AccuracySec=1h
+Persistent=true

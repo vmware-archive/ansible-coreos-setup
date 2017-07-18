@@ -1,9 +1,11 @@
 /var/lib/docker/containers/*/*.log {
   rotate 0
-  daily
+  hourly
   notifempty
   nocompress
-  size 20k
+  size 10M
   missingok
   copytruncate
+  nodateext
+  maxage 1
 }

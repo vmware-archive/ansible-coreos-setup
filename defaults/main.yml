@@ -10,6 +10,7 @@ install_rkt_gc: True
 docker_gc_frequency: "daily"
 docker_gc_grace_period_seconds: "3600"
 logrotate: False
+logrotation_timer_frequency: "*:0/15"
 rkt_gc_frequency: "daily"
 rkt_gc_grace_period: "24h"
 ntp_servers: []
