@@ -56,6 +56,13 @@
   sudo: yes
   when: docker_gc_timer.changed
 
+- name: Update logrotate timer to run every hour
+  become: yes
+  template: src=logrotate.timer dest=/etc/systemd/system/logrotate.timer
+  notify:
+     - Reload logrotate.timer
+  when: logrotate
+
 - name: Enable logrotate for docker containers
   become: yes
   copy: src=docker-container-logrotate dest=/etc/logrotate.d/docker-container-logrotate
