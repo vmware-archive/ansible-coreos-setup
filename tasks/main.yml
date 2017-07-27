@@ -9,53 +9,6 @@
   sudo: yes
   file: path=/opt/bin state=directory mode=0755
 
-- name: install docker downloader
-  sudo: yes
-  copy: src=get-static-docker dest=/opt/bin/get-static-docker mode=0755
-  when: install_static_docker
-
-- name: install docker downloader service
-  sudo: yes
-  copy: src=static-docker.service dest=/etc/systemd/system/static-docker.service
-  register: static_docker
-  when: install_static_docker
-
-- name: Enable docker downloader service
-  service: name=static-docker.service enabled=yes state=started
-  sudo: yes
-  when: static_docker.changed
-
-- name: install docker gc service
-  sudo: yes
-  template: src=docker-gc.service dest=/etc/systemd/system/docker-gc.service
-  register: docker_gc
-  when: install_docker_gc
-
-- name: Enable docker gc service
-  service: name=docker-gc.service enabled=yes
-  sudo: yes
-  when: docker_gc.changed
-
-- name: pull docker gc image
-  sudo: yes
-  docker: image={{docker_gc_img}} state=present
-  ignore_errors: yes
-
-- name: Make sure we have static docker if we install gc
-  fail: msg="static docker is needed for gc to run"
-  when: install_docker_gc and not install_static_docker
-
-- name: install docker gc timer
-  sudo: yes
-  template: src=docker-gc.timer dest=/etc/systemd/system/docker-gc.timer
-  register: docker_gc_timer
-  when: install_docker_gc
-
-- name: Enable docker gc timer
-  service: name=docker-gc.timer enabled=yes state=started
-  sudo: yes
-  when: docker_gc_timer.changed
-
 - name: Update logrotate timer to run every hour
   become: yes
   template: src=logrotate.timer dest=/etc/systemd/system/logrotate.timer

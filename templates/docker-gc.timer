@@ -1,9 +1,0 @@
-[Unit]
-Description=Run Docker Garbage Collector {{docker_gc_frequency}}
-
-[Timer]
-OnCalendar={{docker_gc_frequency}}
-Persistent=true
-
-[Install]
-WantedBy=timers.target
