@@ -1,14 +1,14 @@
 ---
 - name: Reload systemd
-  sudo: yes
+  become: yes
   command: systemctl --system daemon-reload
 
 - name: Reload systemd-timesyncd
-  sudo: yes
+  become: yes
   command: systemctl restart systemd-timesyncd
 
 - name: Enable ntp
-  sudo: yes
+  become: yes
   command: timedatectl set-ntp true
   notify: Reload systemd-timesyncd
 

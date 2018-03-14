@@ -1,12 +1,12 @@
 ---
 # tasks file for ansible-coreos-setup
 - name: setup ntp
-  sudo: yes
+  become: yes
   template: src=timesyncd.conf dest=/etc/systemd/timesyncd.conf
   notify: Enable ntp
 
 - name: create /opt/bin
-  sudo: yes
+  become: yes
   file: path=/opt/bin state=directory mode=0755
 
 - name: Update logrotate timer to run every hour
@@ -29,62 +29,62 @@
   when: not logrotate
 
 - name: Create env.d dir
-  sudo: yes
+  become: yes
   file: path=/etc/env.d state=directory mode=0755
 
 - name: Create coreos env file
-  sudo: yes
+  become: yes
   template: src=coreos.env.j2 dest=/etc/env.d/coreos.env
 
 - name: Create env file
-  sudo: yes
+  become: yes
   assemble: src=/etc/env.d dest=/etc/environment mode=0644
 
 - name: Download etcd
-  sudo: yes
+  become: yes
   get_url: url={{etcd_release_tarball}} dest=/tmp/etcd.tar.gz
   when: etcd_release_tarball != ""
   register: etcd_dl
 
 - name: Extract etcd binaries
-  sudo: yes
+  become: yes
   shell: tar -C {{etcd_install_dir}} --strip-components 1 --wildcards -xf {{etcd_dl.dest}} '*/etcd*'
   when: etcd_dl.changed
 
 - name: Create etcd dropin dir
-  sudo: yes
+  become: yes
   file: path=/etc/systemd/system/etcd2.service.d state=directory
 
 - name: Install etcd dropin
-  sudo: yes
+  become: yes
   template: src=00-etcd.conf dest=/etc/systemd/system/etcd2.service.d/00-etcd.conf
   when: etcd_dl.changed
   notify: Reload systemd
 
 - name: Install rkt gc service
-  sudo: yes
+  become: yes
   template: src=rkt-gc.service dest=/etc/systemd/system/rkt-gc.service
   register: rkt_gc
   when: install_rkt_gc
 
 - name: Enable rkt gc service
   service: name=rkt-gc.service enabled=yes
-  sudo: yes
+  become: yes
   when: rkt_gc.changed
 
 - name: Install rkt gc timer
-  sudo: yes
+  become: yes
   template: src=rkt-gc.timer dest=/etc/systemd/system/rkt-gc.timer
   register: rkt_gc_timer
   when: install_rkt_gc
 
 - name: Enable rkt gc timer
   service: name=rkt-gc.timer enabled=yes state=started
-  sudo: yes
+  become: yes
   when: rkt_gc_timer.changed
 
 - name: Disable units
-  sudo: yes
+  become: yes
   file: src=/dev/null path=/etc/systemd/system/{{item}} state=link force=yes
   with_items: "{{disabled_units}}"
   notify: Reload systemd
