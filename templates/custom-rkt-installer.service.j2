@@ -1,0 +1,16 @@
+# Adopted from https://github.com/rkt/rkt/blob/master/Documentation/install-rkt-in-coreos.md
+
+[Unit]
+Description=custom rkt installer
+Requires=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/mkdir -p /opt/rkt
+ExecStart=/usr/bin/curl --silent -L -o /opt/rkt.tar.gz {{ custom_rkt_url }}
+ExecStart=/usr/bin/curl --silent -L -o /opt/rkt.tar.gz.sig {{ custom_rkt_sig_url }}
+ExecStart=/usr/bin/curl --silent -L -o /opt/coreos-app-signing-key.gpg {{ coreos_app_signing_key }}
+ExecStart=/usr/bin/gpg --keyring /tmp/gpg-keyring --no-default-keyring --import /opt/coreos-app-signing-key.gpg
+ExecStart=/usr/bin/gpg --keyring /tmp/gpg-keyring --no-default-keyring --verify /opt/rkt.tar.gz.sig /opt/rkt.tar.gz
+ExecStart=/usr/bin/tar --strip-components=1 -xf /opt/rkt.tar.gz -C /opt/rkt

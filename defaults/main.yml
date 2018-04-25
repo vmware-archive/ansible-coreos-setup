@@ -9,3 +9,13 @@ install_rkt_gc: True
 rkt_gc_frequency: "daily"
 rkt_gc_grace_period: "24h"
 ntp_servers: []
+
+install_custom_rkt: False
+custom_rkt_url: "https://github.com/rkt/rkt/releases/download/v1.30.0/rkt-v1.30.0.tar.gz"
+custom_rkt_sig_url: "https://github.com/rkt/rkt/releases/download/v1.30.0/rkt-v1.30.0.tar.gz.asc"
+coreos_app_signing_key: "https://coreos.com/dist/pubkeys/app-signing-pubkey.gpg"
+
+install_rkt_image_gc: False
+image_gc_rkt: "/usr/bin/rkt" # rkt executable to run 'image gc'
+rkt_image_gc_grace_period: "96h"
+rkt_image_gc_frequency: "daily"

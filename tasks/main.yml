@@ -83,6 +83,39 @@
   become: yes
   when: rkt_gc_timer.changed
 
+- name: Install custom rkt download service
+  template: src=custom-rkt-installer.service.j2 dest=/etc/systemd/system/custom-rkt-installer.service
+  become: yes
+  register: custom_rkt_dl
+  when: install_custom_rkt
+
+- name: Start custom rkt download service
+  service: name=custom-rkt-installer.service state=started
+  become: yes
+  when: custom_rkt_dl
+
+- name: Install rkt image gc service
+  become: yes
+  template: src=rkt-image-gc.service.j2 dest=/etc/systemd/system/rkt-image-gc.service
+  register: rkt_image_gc
+  when: install_rkt_image_gc
+
+- name: Enable rkt image gc service
+  service: name=rkt-image-gc.service enabled=yes
+  become: yes
+  when: rkt_image_gc.changed
+
+- name: Install rkt image gc timer
+  become: yes
+  template: src=rkt-image-gc.timer.j2 dest=/etc/systemd/system/rkt-image-gc.timer
+  register: rkt_image_gc_timer
+  when: install_rkt_image_gc
+
+- name: Enable rkt image gc timer
+  service: name=rkt-image-gc.timer enabled=yes state=started
+  become: yes
+  when: rkt_image_gc_timer.changed
+
 - name: Disable units
   become: yes
   file: src=/dev/null path=/etc/systemd/system/{{item}} state=link force=yes

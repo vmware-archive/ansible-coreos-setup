@@ -1,0 +1,6 @@
+[Unit]
+Description=Garbage Collection for rkt images
+
+[Service]
+Type=oneshot
+ExecStart={{image_gc_rkt}} image gc --grace-period={{rkt_image_gc_grace_period}}
