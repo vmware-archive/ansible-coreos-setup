@@ -1,0 +1,9 @@
+[Unit]
+Description=Run rkt Image Garbage Collector {{rkt_image_gc_frequency}}
+
+[Timer]
+OnCalendar={{rkt_image_gc_frequency}}
+Persistent=true
+
+[Install]
+WantedBy=timers.target
