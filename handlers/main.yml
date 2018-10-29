@@ -16,6 +16,10 @@
   become: yes
   command: systemctl restart logrotate.timer
 
+- name: Stop logrotate.timer
+  become: yes
+  command: systemctl stop logrotate.timer
+
 - name: Run logrotate
   become: yes
   command: /usr/sbin/logrotate -fv /etc/logrotate.d/docker-container-logrotate

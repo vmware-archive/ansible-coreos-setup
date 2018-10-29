@@ -9,7 +9,7 @@
   become: yes
   file: path=/opt/bin state=directory mode=0755
 
-- name: Update logrotate timer to run every hour
+- name: Update logrotate timer to run at given cadence
   become: yes
   template: src=logrotate.timer dest=/etc/systemd/system/logrotate.timer
   notify:
@@ -26,6 +26,13 @@
 - name: Disable logrotate for docker containers
   become: yes
   file: path=/etc/logrotate.d/docker-container-logrotate state=absent
+  when: not logrotate
+
+- name: Disable logrotate all together
+  become: yes
+  file: path=/etc/systemd/system/logrotate.timer state=absent
+  notify:
+     - Stop logrotate.timer
   when: not logrotate
 
 - name: Create env.d dir
