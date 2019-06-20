@@ -1,9 +1,11 @@
+# Copyright 2015 VMware, Inc.  All rights reserved.
+# SPDX-License-Identifier: MIT OR GPL-3.0-only
 ---
 galaxy_info:
   author: Yann Hodique
   description: coreos-setup role
   company: VMware
-  license: MIT
+  license: license ( MIT, GPLv3 )
   min_ansible_version: 1.2
   categories:
     - system
